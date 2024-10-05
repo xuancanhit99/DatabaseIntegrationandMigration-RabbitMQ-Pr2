@@ -1,0 +1,39 @@
+Các loại exchange_type
+ChatGPT said:
+ChatGPT
+
+Trong RabbitMQ, có bốn loại exchange chính, mỗi loại hoạt động với cơ chế định tuyến (routing) khác nhau để chuyển thông điệp từ producer đến các queue. Các loại exchange bao gồm:
+1. Direct Exchange (exchange_type='direct')
+
+    Cách hoạt động: Gửi thông điệp đến các queue dựa trên sự trùng khớp chính xác giữa routing_key của thông điệp và binding_key của queue.
+    Ứng dụng: Khi bạn muốn gửi thông điệp đến một hoặc một vài queue cụ thể có binding_key khớp với routing_key.
+    Ví dụ: Nếu bạn có một thông điệp với routing_key='error', thông điệp này sẽ chỉ được chuyển đến các queue mà được liên kết (bind) với binding_key='error'.
+
+2. Fanout Exchange (exchange_type='fanout')
+
+    Cách hoạt động: Phát (broadcast) thông điệp đến tất cả các queue đã liên kết (bind) với exchange, không quan tâm đến routing_key.
+    Ứng dụng: Khi bạn muốn gửi thông điệp đến tất cả các queue. Ví dụ như hệ thống logging hay gửi thông báo hệ thống đến tất cả các người nhận.
+    Ví dụ: Khi gửi thông điệp đến một fanout exchange, tất cả các queue liên kết với exchange đó sẽ nhận được bản sao của thông điệp.
+
+3. Topic Exchange (exchange_type='topic')
+
+    Cách hoạt động: Gửi thông điệp dựa trên sự trùng khớp của routing_key với binding_key của queue, sử dụng các mẫu ký tự đại diện (* và #).
+        * đại diện cho một từ (ngăn cách bằng dấu .).
+        # đại diện cho không hoặc nhiều từ.
+    Ứng dụng: Khi bạn muốn định tuyến linh hoạt dựa trên các mẫu ký tự phức tạp, chẳng hạn như routing key động.
+    Ví dụ: Nếu routing_key là "user.info" và queue được liên kết với binding_key='user.*', thông điệp sẽ được chuyển đến queue đó. Hoặc nếu routing_key='order.created.us' và queue có binding_key='order.#', thông điệp cũng sẽ được chuyển đến.
+
+4. Headers Exchange (exchange_type='headers')
+
+    Cách hoạt động: Định tuyến dựa trên các thuộc tính của header thay vì routing_key. Thông điệp sẽ được gửi đến các queue mà các giá trị header khớp với các điều kiện x-match (có thể là all hoặc any).
+        x-match=all: Tất cả các giá trị header phải khớp.
+        x-match=any: Chỉ cần một giá trị header khớp.
+    Ứng dụng: Khi bạn cần định tuyến dựa trên các thuộc tính phức tạp của thông điệp, không chỉ dựa vào routing_key.
+    Ví dụ: Nếu bạn có một thông điệp với header {"format": "pdf", "type": "report"} và queue được cấu hình để nhận thông điệp với header tương ứng, thông điệp sẽ được chuyển đến queue đó.
+
+Tổng kết:
+
+    Direct Exchange: Định tuyến theo routing_key chính xác.
+    Fanout Exchange: Phát thông điệp đến tất cả các queue đã liên kết.
+    Topic Exchange: Định tuyến dựa trên mẫu ký tự với routing_key.
+    Headers Exchange: Định tuyến dựa trên các giá trị header của thông điệp.
